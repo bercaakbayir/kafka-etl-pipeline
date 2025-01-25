@@ -8,7 +8,6 @@ import os
 
 load_dotenv()
 
-
 POSTGRE_HOST = os.getenv('POSTGRE_HOST')
 POSTGRE_USER = os.getenv('POSTGRE_USER')
 POSTGRE_PASSWORD = os.getenv('POSTGRE_PASSWORD')
@@ -20,6 +19,7 @@ DATA_FEATURE_HUMID = os.getenv('DATA_FEATURE_HUMID')
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 def create_consumer():
     logger.info("Creating Kafka consumer...")
@@ -33,10 +33,11 @@ def create_consumer():
         auto_commit_interval_ms=2000
     )
 
+
 def store_data():
     max_retries = 5
     retry_delay = 5
-    
+
     consumer = None
     conn = None
     cur = None
@@ -53,7 +54,7 @@ def store_data():
         conn.autocommit = False  # Explicit transaction management
         cur = conn.cursor()
         logger.info("Successfully connected to PostgreSQL database")
-            
+
         cur.execute(f"""
             CREATE TABLE IF NOT EXISTS sensor_data (
                 {DATA_FEATURE_DATE} TIMESTAMP,
@@ -68,8 +69,8 @@ def store_data():
             try:
                 data = message.value
                 cur.execute(
-                     f"INSERT INTO sensor_data ({DATA_FEATURE_DATE}, {DATA_FEATURE_TEMP}, {DATA_FEATURE_HUMID}) VALUES (%s, %s, %s)",
-                     (data[DATA_FEATURE_DATE], data[DATA_FEATURE_TEMP], data[DATA_FEATURE_HUMID])
+                    f"INSERT INTO sensor_data ({DATA_FEATURE_DATE}, {DATA_FEATURE_TEMP}, {DATA_FEATURE_HUMID}) VALUES (%s, %s, %s)",
+                    (data[DATA_FEATURE_DATE], data[DATA_FEATURE_TEMP], data[DATA_FEATURE_HUMID])
                 )
                 conn.commit()
                 logger.info(f"Stored sensor data: {data}")
@@ -93,6 +94,7 @@ def store_data():
     except Exception as e:
         logger.error(f"Kafka consumer error: {e}")
         time.sleep(2)  # Wait before retrying
+
 
 if __name__ == "__main__":
     logger.info("Consumer starting up...")

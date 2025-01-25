@@ -23,6 +23,7 @@ DATA_FEATURE_DATE = os.getenv('DATA_FEATURE_DATE')
 DATA_FEATURE_TEMP = os.getenv('DATA_FEATURE_TEMP')
 DATA_FEATURE_HUMID = os.getenv('DATA_FEATURE_HUMID')
 
+
 def process_data():
     try:
         conn = psycopg2.connect(
@@ -44,7 +45,7 @@ def process_data():
                 avg_temperature FLOAT
             )
         """)
-            
+
         cur.execute("""
             CREATE TABLE IF NOT EXISTS humidity_summary (
                 interval_start TIMESTAMP,
@@ -94,7 +95,7 @@ def process_data():
                     )
                     GROUP BY interval_start, interval_end
                 """)
-                    
+
                 conn.commit()
                 logger.info("Successfully processed new sensor data")
                 time.sleep(5)  # Check for new data every 5 seconds
@@ -106,6 +107,7 @@ def process_data():
     except psycopg2.Error as e:
         logger.error(f"Failed to connect to database: {e}")
         time.sleep(5)  # Wait before retrying connection
+
 
 if __name__ == "__main__":
     logger.info("ETL processor starting up...")

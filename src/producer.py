@@ -3,7 +3,7 @@ from kafka import KafkaProducer
 import json
 import time
 import logging
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 import os
 
 load_dotenv()
