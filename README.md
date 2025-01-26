@@ -34,19 +34,6 @@ A distributed system for processing sensor data using Apache Kafka and PostgreSQ
   docker-compose down
 ```
 
-## Environment Variables
-Define these variables in your .env file:
-
-TEMPERATURE_INTERVAL: Interval for temperature summaries (minutes).
-
-HUMIDITY_INTERVAL: Interval for humidity summaries (minutes).
-
-POSTGRE_*: PostgreSQL connection settings.
-
-KAFKA_*: Kafka connection settings.
-
-DATA_FEATURE_*: Data column names in the Parquet file.
-
 
 ## Monitoring
 To check service logs:
