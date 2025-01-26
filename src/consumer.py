@@ -55,21 +55,29 @@ def store_data():
         cur = conn.cursor()
         logger.info("Successfully connected to PostgreSQL database")
 
-        cur.execute(f"""
+        # Create table if not exists
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS sensor_data (
-                {DATA_FEATURE_DATE} TIMESTAMP,
-                {DATA_FEATURE_TEMP} FLOAT,
-                {DATA_FEATURE_HUMID} FLOAT
+                date_time TIMESTAMP,
+                temp FLOAT,
+                humidity FLOAT
             )
         """)
         conn.commit()
-        logger.info("Sensor data table created/verified")
 
         for message in consumer:
             try:
+                if message is None:
+                    logger.error("Received None message")
+                    continue
+
                 data = message.value
+                if data is None:
+                    logger.error("Received invalid message with None value")
+                    continue
+
                 cur.execute(
-                    f"INSERT INTO sensor_data ({DATA_FEATURE_DATE}, {DATA_FEATURE_TEMP}, {DATA_FEATURE_HUMID}) VALUES (%s, %s, %s)",
+                    "INSERT INTO sensor_data (date_time, temp, humidity) VALUES (%s, %s, %s)",
                     (data[DATA_FEATURE_DATE], data[DATA_FEATURE_TEMP], data[DATA_FEATURE_HUMID])
                 )
                 conn.commit()
@@ -85,7 +93,6 @@ def store_data():
                 time.sleep(retry_delay)
             except Exception as e:
                 logger.error(f"Error processing message: {e}")
-                conn.rollback()
                 continue
 
     except psycopg2.Error as e:
