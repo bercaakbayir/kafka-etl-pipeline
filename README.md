@@ -76,4 +76,15 @@ To check service logs:
 - temperature_summary: Aggregated temperature data.
 - humidity_summary: Aggregated humidity data.
 
+## Run Unit Tests
+
+- Run All Unit Tests:
+```bash
+  pytest tests -v
+```
+
+- Run Unit Test for Specific Service:
+```bash
+  pytest tests/test_<service_name>.py -v
+```
 
