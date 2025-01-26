@@ -28,7 +28,7 @@ A distributed system for processing sensor data using Apache Kafka and PostgreSQ
   docker-compose up --build
 ```
 
-3. Stop the system
+3. Stop the services
 
 ```bash
   docker-compose down
@@ -56,12 +56,12 @@ To check service logs:
 ```
 
 ## Current Services
--producer
--consumer
--etl
--postgres
--kafka
--zookeeper
+- producer : This service is able to read the data from parquet and send the message to Kafka.
+- consumer : Consumer reads the data from Kafka and store it into the PostgreSQL, in main table sensor_data.
+- etl : ETL processor service creates queries to summarize the temperature and humidity data and insert into the summary tables batch by batch with determined time intervals.
+- postgres : Stores the data in every step. 
+- kafka : Handles the sensor data messages.
+- zookeeper : Provides orchestration of services
 
 ## Data Flow
 - Producer reads the Parquet file.
